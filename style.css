@@ -1,0 +1,460 @@
+/* ============================================================
+   1. VARIABLES & CONFIGURATION
+   COMMENTAIRE : C'est ici qu'on définit les couleurs et polices une seule fois.
+   Si tu veux changer le bleu du site, tu le changes juste ici !
+============================================================ */
+:root {
+    /* Couleurs */
+    --primary-color: #007bff;       /* Bleu Principal (Boutons, Liens) */
+    --primary-dark: #0056b3;        /* Bleu Foncé (Au survol de la souris) */
+    --secondary-color: #6c757d;     /* Gris Texte (Paragraphes) */
+    --dark-color: #2c3e50;          /* Bleu Nuit (Titres, Footer) */
+    --light-color: #f8f9fa;         /* Fond clair */
+    --white: #ffffff;
+    --success-color: #28a745;       /* Vert (Validation) */
+    --danger-color: #dc3545;        /* Rouge (Erreur / Suppression) */
+    
+    /* Police */
+    --font-main: 'Poppins', sans-serif;
+}
+
+/* ============================================================
+   2. RESET & GLOBAL
+   COMMENTAIRE : On remet à zéro les marges par défaut des navigateurs.
+============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Permet de calculer la taille des boîtes correctement avec les bordures */
+}
+
+body {
+    font-family: var(--font-main);
+    /* COMMENTAIRE : Dégradé de fond général de la page */
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: var(--dark-color);
+    line-height: 1.6;
+    min-height: 100vh; /* Prend au minimum toute la hauteur de l'écran */
+}
+
+a { text-decoration: none; color: inherit; } /* Enlève le soulignement bleu moche par défaut */
+ul { list-style: none; } /* Enlève les puces (points) des listes */
+
+.container {
+    width: 90%;
+    max-width: 1200px; /* Largeur max du site pour ne pas être trop étiré sur grands écrans */
+    margin: 0 auto;    /* Centre le contenu */
+    padding: 0 15px;
+}
+
+/* ============================================================
+   3. HEADER (GLASSMORPHISM)
+   COMMENTAIRE : Style "Verre dépoli" pour le menu du haut
+============================================================ */
+.glass-header {
+    background: rgba(255, 255, 255, 0.92); /* Transparence (0.92) */
+    backdrop-filter: blur(12px);           /* Flou de l'arrière-plan (Effet verre) */
+    -webkit-backdrop-filter: blur(12px);   /* Compatibilité Safari */
+    position: fixed; /* Le menu reste collé en haut quand on scrolle */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* S'assure que le menu est AU-DESSUS de tout le reste */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); /* Légère ombre en bas */
+    padding: 0.8rem 0;
+    transition: all 0.3s ease;
+}
+
+/* COMMENTAIRE : Comme le header est "fixed", il flotte au-dessus du site.
+   Ce "spacer" est une boîte vide invisible qui pousse le contenu vers le bas 
+   pour qu'il ne soit pas caché derrière le menu. */
+.header-spacer {
+    height: 90px;
+    width: 100%;
+}
+
+.header-container {
+    display: flex; /* Aligne le logo et le menu sur la même ligne */
+    justify-content: space-between; /* Espace max entre logo et menu */
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- LOGO --- */
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo img {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    transition: transform 0.3s ease;
+}
+
+/* COMMENTAIRE : Animation du logo quand la souris passe dessus */
+.brand-logo:hover img {
+    transform: rotate(-5deg) scale(1.1); /* Pivote et grossit un peu */
+}
+
+.brand-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.text-form { color: var(--dark-color); }
+.text-campus { color: var(--primary-color); }
+
+/* --- MENU NAVIGATION --- */
+.nav-menu ul {
+    display: flex;
+    gap: 25px; /* Espace entre les liens du menu */
+}
+
+.nav-link {
+    color: #555;
+    font-weight: 500;
+    font-size: 0.95rem;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+/* COMMENTAIRE : Création de la petite barre bleue qui apparaît sous le lien au survol */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0; /* Au début, largeur 0 (invisible) */
+    height: 3px;
+    bottom: -6px;
+    left: 0;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease; /* Animation de la largeur */
+    border-radius: 2px;
+}
+
+.nav-link:hover { color: var(--primary-color); }
+.nav-link:hover::after { width: 100%; } /* Au survol, la barre prend 100% de largeur */
+
+.admin-active { color: var(--danger-color) !important; }
+
+/* --- BOUTONS & AUTH (Dans le header) --- */
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-name {
+    font-size: 0.9rem;
+    color: #666;
+    margin-right: 5px;
+    display: none; /* Caché sur mobile */
+}
+/* COMMENTAIRE : Affiche le nom seulement si l'écran est large (Ordi) */
+@media (min-width: 992px) { .user-name { display: inline-block; } }
+
+/* Lien Admin Discret */
+.separator { color: #ccc; font-weight: 300; }
+.admin-access {
+    font-size: 0.85rem !important;
+    color: #999 !important;
+    display: flex; align-items: center; gap: 5px;
+}
+.admin-access:hover { color: var(--danger-color) !important; }
+
+/* Boutons Pill (Forme de pilule arrondie) */
+.btn-pill {
+    padding: 10px 24px;
+    border-radius: 50px; /* Bords très ronds */
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+}
+.btn-primary:hover {
+    transform: translateY(-2px); /* Le bouton monte un peu */
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3); /* L'ombre grandit */
+}
+
+.btn-logout {
+    background: white;
+    border: 1px solid #eee;
+    color: var(--danger-color);
+    padding: 8px 18px;
+}
+.btn-logout:hover {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-icon {
+    font-size: 1.2rem;
+    padding: 8px;
+    border-radius: 50%; /* Cercle parfait */
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+.btn-icon:hover { transform: scale(1.1); }
+
+/* ============================================================
+   4. ELEMENTS GLOBAUX (Cartes, Forms, Tables, Hero)
+============================================================ */
+/* Hero Section (La grande bannière d'accueil) */
+.hero-section { padding: 40px 0; }
+.hero-container { display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+.hero-text h1 { font-size: 3rem; font-weight: 800; margin-bottom: 20px; line-height: 1.2; }
+.hero-text .highlight { color: var(--primary-color); }
+.hero-text p { font-size: 1.1rem; color: var(--secondary-color); margin-bottom: 30px; }
+
+/* COMMENTAIRE : Animation de l'image qui flotte de haut en bas */
+.hero-image img { max-width: 100%; border-radius: 20px; animation: float 6s ease-in-out infinite; }
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); } /* Monte de 15 pixels */
+    100% { transform: translateY(0px); }
+}
+
+/* Cartes (Pour afficher les cours) */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Grille responsive automatique */
+    gap: 30px;
+    margin-top: 30px;
+}
+.card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex; flex-direction: column;
+}
+/* COMMENTAIRE : Effet "Levitation" de la carte au survol */
+.card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+.card h3 { margin-bottom: 15px; font-size: 1.3rem; }
+.card p { color: var(--secondary-color); margin-bottom: 20px; flex-grow: 1; }
+
+/* Styles des formulaires */
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid #ddd;
+    background: #f9f9f9; font-family: var(--font-main); transition: all 0.3s;
+}
+.form-group input:focus {
+    background: white; border-color: var(--primary-color); outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1); /* Halo bleu quand on écrit */
+}
+
+/* Tables (Tableaux d'administration) */
+table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    background: white; border-radius: 15px; overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-top: 20px;
+}
+th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+th { background: #f1f3f5; font-weight: 700; color: var(--dark-color); }
+tr:hover { background-color: #f8f9fa; }
+
+/* Footer */
+footer {
+    background: var(--dark-color); color: white; text-align: center;
+    padding: 2rem 0; margin-top: 60px;
+}
+
+/* ============================================================
+   5. RESPONSIVE (ADAPTATION MOBILE)
+   COMMENTAIRE : Tout ce qui est ici s'applique si l'écran fait moins de 992px (Tablettes/Mobiles)
+============================================================ */
+@media (max-width: 992px) {
+    .header-container { flex-direction: column; gap: 15px; padding: 15px; }
+    .nav-menu ul { flex-wrap: wrap; justify-content: center; gap: 15px; }
+    .auth-buttons { width: 100%; justify-content: center; flex-wrap: wrap; }
+    .hero-container { flex-direction: column-reverse; text-align: center; } /* Image passe au dessus du texte */
+    .hero-text p { margin: 0 auto 30px auto; }
+    table { display: block; overflow-x: auto; } /* Permet de scroller le tableau horizontalement sur mobile */
+}
+
+/* ============================================================
+   6. AJOUTS : BOUTONS ACTIONS & LOGIN
+============================================================ */
+
+/* --- Boutons d'action dans le tableau (Modifier / Supprimer) --- */
+.action-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    margin-right: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Bouton Modifier (Jaune/Orange) */
+.btn-edit {
+    background-color: #ffc107; /* Jaune orangé */
+    color: #333; /* Texte foncé pour lisibilité */
+}
+.btn-edit:hover {
+    background-color: #e0a800;
+    transform: translateY(-2px);
+}
+
+/* Bouton Supprimer (Rouge) */
+.btn-delete {
+    background-color: #dc3545; /* Rouge erreur */
+    color: white;
+}
+.btn-delete:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
+}
+
+/* --- Bouton "Se connecter" (Pleine largeur pour les formulaires) --- */
+.btn-full {
+    width: 100%;
+    display: block;
+    text-align: center;
+    padding: 12px;
+    margin-top: 10px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn-full:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+
+/* --- STYLES DES BOUTONS DE FORMULAIRE (Connexion / Inscription) --- */
+
+/* Le gros bouton principal */
+.btn-submit {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Dégradé Bleu */
+    color: white;
+    border: none;
+    border-radius: 50px; /* Bords très arrondis (Pill) */
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+    display: block;
+}
+
+/* Effet au survol de la souris */
+.btn-submit:hover {
+    transform: translateY(-3px); /* Le bouton remonte légèrement */
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4); /* L'ombre grandit */
+    background: linear-gradient(135deg, #0069d9 0%, #004494 100%);
+}
+
+/* Style pour le lien "Pas encore inscrit ?" en dessous */
+.form-footer {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.form-footer a {
+    color: #007bff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.form-footer a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* --- Boutons du profil client --- */
+.profile-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-profile {
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    transition: background-color 0.3s ease; /* Animation douce */
+}
+
+/* Le bouton bleu (Inscription) */
+.btn-blue {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-blue:hover {
+    background-color: #0056b3; /* Devient plus foncé au survol */
+}
+
+/* Le bouton rouge (Déconnexion) */
+.btn-red {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-red:hover {
+    background-color: #a71d2a; /* Devient plus foncé au survol */
+}
+
+/* Bouton normal */
+.btn-insc {
+    background-color: #28a745; /* Vert */
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+/* Bouton "Créer un compte pour..." */
+.btn-auth-required {
+    background-color: #ffc107; /* Jaune/Orange */
+    color: #333; /* Texte foncé pour lisibilité */
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+}
+.btn-auth-required:hover {
+    background-color: #e0a800;
+}
